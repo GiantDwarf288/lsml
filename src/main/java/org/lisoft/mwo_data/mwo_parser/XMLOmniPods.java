@@ -51,14 +51,16 @@ class XMLOmniPods {
   private static List<OmniPodSetBonus> getAllSetBonusLevels(
       PartialDatabase aPartialDatabase, XMLOmniPodsSet set) {
     final List<OmniPodSetBonus> setBonuses = new ArrayList<>();
-    for (final XMLOmniPodsBonus bonusLevel : set.SetBonuses.bonuses) {
-      final List<Modifier> setQuirks = new ArrayList<>();
-      for (final XMLQuirk quirk : bonusLevel.quirks) {
-        setQuirks.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
+    if (null != set.SetBonuses && null != set.SetBonuses.bonuses){
+      for (final XMLOmniPodsBonus bonusLevel : set.SetBonuses.bonuses) {
+        final List<Modifier> setQuirks = new ArrayList<>();
+        for (final XMLQuirk quirk : bonusLevel.quirks) {
+          setQuirks.add(QuirkModifiers.createModifier(quirk, aPartialDatabase));
+        }
+        final int minPieces = bonusLevel.PieceCount <= 0 ? 8 : bonusLevel.PieceCount;
+        final OmniPodSetBonus omniPodSetBonus = new OmniPodSetBonus(minPieces, setQuirks);
+        setBonuses.add(omniPodSetBonus);
       }
-      final int minPieces = bonusLevel.PieceCount <= 0 ? 8 : bonusLevel.PieceCount;
-      final OmniPodSetBonus omniPodSetBonus = new OmniPodSetBonus(minPieces, setQuirks);
-      setBonuses.add(omniPodSetBonus);
     }
     setBonuses.sort(Comparator.comparingInt(OmniPodSetBonus::getMinPieces));
     return setBonuses;

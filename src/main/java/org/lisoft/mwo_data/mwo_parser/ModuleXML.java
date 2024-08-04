@@ -20,17 +20,18 @@ package org.lisoft.mwo_data.mwo_parser;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.equipment.Module;
+import org.lisoft.mwo_data.equipment.*;
 import org.lisoft.mwo_data.mechs.ChassisClass;
 import org.lisoft.mwo_data.mechs.HardPointType;
 import org.lisoft.mwo_data.mechs.Location;
 import org.lisoft.mwo_data.modifiers.Attribute;
 import org.lisoft.mwo_data.modifiers.Modifier;
 import org.lisoft.mwo_data.modifiers.ModifierDescription;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 class ModuleXML extends ModuleBaseXML {
   @XStreamAsAttribute protected String CType;
@@ -64,7 +65,8 @@ class ModuleXML extends ModuleBaseXML {
     }
   }
 
-  public Optional<Item> asItem(PartialDatabase aPartialDatabase) {
+  public Optional<Item> asItem(PartialDatabase aPartialDatabase) throws ParseErrorException{
+    try{
     return switch (CType) {
       case "CAmmoTypeStats" -> Optional.of(asAmmunition(aPartialDatabase));
       case "CEngineStats" -> Optional.of(asEngine(aPartialDatabase));
@@ -80,6 +82,12 @@ class ModuleXML extends ModuleBaseXML {
           asInternal(aPartialDatabase));
       default -> Optional.empty();
     };
+    }catch (Exception e){
+      var name = getUiName(aPartialDatabase);
+      var key = getMwoKey();
+      var id = getMwoId();
+      throw new ParseErrorException("Error while parsing item ID: " + id + " with key: " + key + " and name: " + name, e);
+    }
   }
 
   private Internal asInternal(PartialDatabase aPartialDatabase) {
@@ -254,24 +262,37 @@ class ModuleXML extends ModuleBaseXML {
   }
 
   private TargetingComputer asTargetingComputer(PartialDatabase aPartialDatabase) {
-
     final List<Modifier> modifiers = new ArrayList<>();
     if (null != TargetingComputerStats.WeaponStatsFilter) {
       for (final TargetingComputerStatsTag.WeaponStatsFilter filter :
           TargetingComputerStats.WeaponStatsFilter) {
-        for (final TargetingComputerStatsTag.WeaponStatsFilter.WeaponStats stats :
-            filter.WeaponStats) {
-          final double range = filter.range != null ? filter.range.multiplier : 0.0;
+        final double range = filter.range != null ? filter.range.multiplier : 0.0;
+
+        if (null != filter.WeaponStats){
+          for (final TargetingComputerStatsTag.WeaponStatsFilter.WeaponStats stats :
+              filter.WeaponStats) {
+            modifiers.addAll(
+                QuirkModifiers.createModifiers(
+                    getUiName(aPartialDatabase),
+                    stats.operation,
+                    filter.compatibleWeapons,
+                    0,
+                    range,
+                    stats.speed,
+                    0,
+                    0));
+          }
+        }else{
           modifiers.addAll(
-              QuirkModifiers.createModifiers(
-                  getUiName(aPartialDatabase),
-                  stats.operation,
-                  filter.compatibleWeapons,
-                  0,
-                  range,
-                  stats.speed,
-                  0,
-                  0));
+                  QuirkModifiers.createModifiers(
+                          getUiName(aPartialDatabase),
+                          "+",
+                          filter.compatibleWeapons,
+                          0,
+                          range,
+                          0,
+                          0,
+                          0));
         }
       }
     }
