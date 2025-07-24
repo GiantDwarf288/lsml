@@ -1,6 +1,6 @@
 /*
  * Li Song Mechlab - A 'mech building tool for PGI's MechWarrior: Online.
- * Copyright (C) 2013-2023  Li Song
+ * Copyright (C) 2013-2025  Li Song
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,10 @@ class Localisation {
 
     // PGI messed up again, add a patch *sigh*. Issue #804.
     key2string.putIfAbsent("@fnr-j", "JAILBIRD");
+
+    // Add missing engine localization keys that cause parsing failures
+    key2string.putIfAbsent("@engine_standard_fusion_95", "STD ENGINE 95");
+    key2string.putIfAbsent("@engine_clan_xl_fusion_95", "XL ENGINE 95");
   }
 
   public String key2string(String aKey) {
@@ -73,7 +77,7 @@ class Localisation {
       final String noFamily = canon.replace("family", "");
       if (canon.contains("_desc") || canon.endsWith("desc")) {
         return "Empty Description";
-      }else if (key2string.containsKey(noFamily)){
+      } else if (key2string.containsKey(noFamily)) {
         // PGI, plz...
         return key2string.get(noFamily);
       }
@@ -103,7 +107,7 @@ class Localisation {
       // Really PGI?, really?
       canonized = canonized + "d";
     }
-    if(canonized.endsWith("clanheavymediumlaser_minheatpenaltylevel_")){
+    if (canonized.endsWith("clanheavymediumlaser_minheatpenaltylevel_")) {
       // Goddamnit PGI...
       canonized = canonized + "add";
     }
