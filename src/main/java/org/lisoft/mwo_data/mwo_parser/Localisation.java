@@ -69,6 +69,9 @@ class Localisation {
     // Add missing engine localization keys that cause parsing failures
     key2string.putIfAbsent("@engine_standard_fusion_95", "STD ENGINE 95");
     key2string.putIfAbsent("@engine_clan_xl_fusion_95", "XL ENGINE 95");
+    
+    // Add missing quirk localization keys
+    key2string.putIfAbsent("@qrk_isultraautocannon10_minheatpenaltylevel_add", "ULTRA AC/10 MIN HEAT PENALTY LEVEL");
   }
 
   public String key2string(String aKey) {

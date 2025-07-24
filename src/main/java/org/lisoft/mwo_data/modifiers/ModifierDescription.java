@@ -221,6 +221,11 @@ public class ModifierDescription {
     ALL_SPECIFIERS.add(SPEC_WEAPON_ROF);
     ALL_SPECIFIERS.add(SPEC_WEAPON_SPREAD);
     ALL_SPECIFIERS.add(SPEC_WEAPON_TAG_DURATION);
+    
+    // Add missing quirk specifiers to prevent "Unknown spec" warnings
+    ALL_SPECIFIERS.add("silverbullet");  // Silver bullet ammunition type
+    ALL_SPECIFIERS.add("ltr");           // Left Torso Rear armor  
+    ALL_SPECIFIERS.add("rtr");           // Right Torso Rear armor
 
     for (final Location location : Location.values()) {
       for (final ArmourSide side : ArmourSide.values()) {

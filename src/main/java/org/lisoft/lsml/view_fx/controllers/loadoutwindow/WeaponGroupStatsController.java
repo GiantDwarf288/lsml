@@ -84,7 +84,7 @@ public class WeaponGroupStatsController extends AbstractFXController {
         sustainedDPS.textProperty().bind(format("Sust. DPS: %.1h @ %.0h m", aGroupMetrics.sustainedDPS,
                                                 aGroupMetrics.sustainedDPS.displayRange()));
         burstDamage.textProperty()
-                   .bind(format("Burst %.1h s: %.1h @ %.0h m", aGlobalMetrics.burstTime, aGroupMetrics.burstDamage,
+                   .bind(format("Burst %.1h s: %.1h @ %.0h m", aGroupMetrics.burstDamage.timeProperty(), aGroupMetrics.burstDamage,
                                 aGroupMetrics.burstDamage.displayRange()));
         alphaTimeToOverheat.textProperty().bind(format("TtO Alpha: %.1h s", aGroupMetrics.maxDPSTtO));
     }
